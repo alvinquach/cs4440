@@ -21,62 +21,82 @@ int main(void) {
         fgets(input, 255, stdin); // Note that input ends with a newline character.
         fflush(stdin);
 
+        // Get rid of the newline character at the end of the string.
+        if (input[strlen(input) - 1] == '\n') {
+            input[strlen(input) - 1] = 0;
+        }
+
         // Terminate the program if the user input was "exit".
-        if (!strcmp(input, "exit\n")) {
+        if (!strcmp(input, "exit")) {
             printf("Exiting...\n");
             return 0;
         }
-
-        //pid_t pid = fork();
-
-        if (fork() != 0) {
-            continue;
-        }
-
-        char *path;
-        char *argv[127];
-        //char *test[] = {"cd", "-l", NULL};
-
-        printf("%s", input);
-
-        // Create a new string and copy the input to the new string.
-        char input_copy[strlen(input) - 1];
-        strcpy(input_copy, input);
-
-        // Get rid of the newline character at the end of the string.
-        if (input_copy[strlen(input_copy) - 1] == '\n') {
-            input_copy[strlen(input_copy) - 1] = 0;
-        }
         
-        int count = 0;
-        while(1) {
-            char *arg;
-            if (!count) {
-                arg = strtok(input_copy, " ");
-                path = arg;
-            }
-            else {
-                arg = strtok(NULL, " ");
-            }
-            if (arg == NULL) {
-                argv[count] = NULL;
-                break;
-            }
-            printf("\t%s\n", arg);
-            argv[count++] = arg;
+        // Fork a process.
+        pid_t pid = fork();
+        
+        // If there was an error forking...
+        if (pid < 0) {
+            printf("Failed to fork new process. Exiting...");
+            return 1;
         }
 
-        execvp(path, argv);
+        // If the current process is parent...
+        else if (pid > 0) {
+            
+            // If the user input did not end with an '&', then we have to wait for the child process to finish.
+            if (input[strlen(input) - 1] != '&') {
+                int status;
+                waitpid(pid, &status, 0);
+            }
 
-        /** * After reading user input, the steps are:
+        }
 
-        * (1) fork a child process using fork()
+        // If the current process is child...
+        else {
 
-        * (2) the child process will invoke execvp()
+            char *path;
+            char *argv[127];
+            //printf("%s", input);
 
-        * (3) if command included &, parent will invoke wait()
+            // Create a new string and copy the input to the new string.
+            char input_copy[strlen(input) - 1];
+            strcpy(input_copy, input);
 
-        */
+
+
+            // Get rid of the '&' at the end of the string.
+            if (input_copy[strlen(input_copy) - 1] == '&') {
+                input_copy[strlen(input_copy) - 1] = 0;
+            }
+
+            int count = 0;
+            while(1) {
+                char *arg;
+                if (!count) {
+                    arg = strtok(input_copy, " ");
+                    path = arg;
+                }
+                else {
+                    arg = strtok(NULL, " ");
+                }
+                if (arg == NULL) {
+                    argv[count] = NULL;
+                    break;
+                }
+                // printf("\t%s\n", arg);
+                argv[count++] = arg;
+            }
+
+            // Excecute new process.
+            execvp(path, argv);
+
+            // If the execvp failed, then manually exit the fork.
+            printf("Failed to execute command '%s'.\n", path);
+            return 1;
+
+        }
+
     }
     return 0;
 }
