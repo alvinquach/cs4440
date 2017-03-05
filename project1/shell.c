@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include  <sys/types.h>
 
 #define MAX_LINE 80
 
@@ -11,9 +12,9 @@ int main(void) {
 
     int maxLength = MAX_LINE/2 + 1; // WTF?
     
-    int should_run = 1;
+    //int should_run = 1;
 
-    while (should_run) {
+    while (1) {
 
         char input[255];
         printf("osh>");
@@ -26,9 +27,14 @@ int main(void) {
             return 0;
         }
 
+        //pid_t pid = fork();
+
+        if (fork() != 0) {
+            continue;
+        }
+
         char *path;
         char *argv[127];
-        //parse_input(argv, input);
         //char *test[] = {"cd", "-l", NULL};
 
         printf("%s", input);
@@ -41,7 +47,7 @@ int main(void) {
         if (input_copy[strlen(input_copy) - 1] == '\n') {
             input_copy[strlen(input_copy) - 1] = 0;
         }
-
+        
         int count = 0;
         while(1) {
             char *arg;
