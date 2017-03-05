@@ -39,7 +39,9 @@ void add_history(char* history[], char* input, int* count) {
             strcpy(history[i], input);
             break;
         }
+
     }
+
     *count += 1; // Increment the history count.
 }
 
@@ -60,7 +62,7 @@ int main(void) {
     while (1) {
         
         // Print user input prompt.
-        printf("osh>");
+        printf("osh> ");
 
         // Get user input from stdin, and then flush stdin after.
         fgets(input, MAX_LINE, stdin); // Note that input ends with a newline character.
@@ -91,7 +93,8 @@ int main(void) {
         // Handle "!!" input.
         else if (!strcmp(input, "!!")) {
             if (history_count == 0) {
-                printf("No commands in history.");
+                printf("No commands in history.\n");
+                continue;
             }
             else {
                 strcpy(input, history_count > HISTORY_LIMIT ? history[HISTORY_LIMIT - 1] : history[history_count - 1]);
@@ -120,7 +123,7 @@ int main(void) {
         
         // If there was an error forking...
         if (pid < 0) {
-            printf("Failed to fork new process. Exiting...");
+            printf("Failed to fork new process. Exiting...\n");
             return 1;
         }
 
@@ -176,5 +179,6 @@ int main(void) {
             return 1;
         }
     }
+
     return 0;
 }
