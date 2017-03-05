@@ -6,19 +6,19 @@
 #include <string.h>
 #include  <sys/types.h>
 
-#define MAX_LINE 80
+#define MAX_LINE 255
 
 int main(void) {
 
-    int maxLength = MAX_LINE/2 + 1; // WTF?
-    
-    //int should_run = 1;
+    char input[MAX_LINE];
 
     while (1) {
-
-        char input[255];
+        
+        // Print user input prompt.
         printf("osh>");
-        fgets(input, 255, stdin); // Note that input ends with a newline character.
+
+        // Get user input from stdin, and then flush stdin after.
+        fgets(input, MAX_LINE, stdin); // Note that input ends with a newline character.
         fflush(stdin);
 
         // Get rid of the newline character at the end of the string.
@@ -56,7 +56,7 @@ int main(void) {
         else {
 
             char *path;
-            char *argv[127];
+            char *argv[MAX_LINE / 2];
             //printf("%s", input);
 
             // Create a new string and copy the input to the new string.
