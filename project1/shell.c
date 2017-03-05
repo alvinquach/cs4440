@@ -5,31 +5,25 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <sys/types.h>
 
 #define MAX_LINE 255
-#define HISTORY_SIZE 10
+#define HISTORY_LIMIT 3
+
 
 void add_history(char* history[], char* input, int* count) {
 
     int i;
 
-    printf("Contents Before: \n");
-    for (i = 0; i < HISTORY_SIZE; i++) {
-        if (history[i] == NULL) break;
-        printf("\t%i %s\n", i, history[i]);
-    }
-    printf("\n");
-    printf("Count Before: %i\n", *count);
-
     // Store the issued command into the history array, removing the first value and shifting the rest of the values over if necessary.
-    for (i = 0; i < HISTORY_SIZE; i++) {
+    for (i = 0; i < HISTORY_LIMIT; i++) {
         
         // If the history has already reached its limit, then copy the value from the next value.
-        if (*count >= HISTORY_SIZE) {
+        if (*count >= HISTORY_LIMIT) {
 
             // If the index is not the last index, then copy the value from the next value.
-            if (i < HISTORY_SIZE - 1) {
+            if (i < HISTORY_LIMIT - 1) {
                 strcpy(history[i], history[i + 1]);
             }
 
@@ -47,18 +41,12 @@ void add_history(char* history[], char* input, int* count) {
         }
 
     }
-    
-    printf("Contents After: \n");
-    for (i = 0; i < HISTORY_SIZE; i++) {
-        if (history[i] == NULL) break;
-        printf("\t%i %s\n", i, history[i]);
-    }
-    printf("\n");
 
     // Increment the history count.
     *count += 1;
 
 }
+
 
 int main(void) {
 
@@ -66,9 +54,9 @@ int main(void) {
 
     // Initialize command history array.
     int history_count = 0;
-    char* history[HISTORY_SIZE];
+    char* history[HISTORY_LIMIT];
     int i;
-    for (i = 0; i < HISTORY_SIZE; i++) {
+    for (i = 0; i < HISTORY_LIMIT; i++) {
         history[i] = malloc(MAX_LINE);
         strcpy(history[i], "\0");
     }
@@ -93,11 +81,43 @@ int main(void) {
             return 0;
         }
 
-        // TODO Detect "!!" and "!n" inputs.
+        // Print command history if the user input was "history".
+        if (!strcmp(input, "history")) {
+            for (i = HISTORY_LIMIT - 1; i >= 0; i--) {
+                if (!strcmp(history[i], "\0")) {
+                    continue;
+                }
+                printf("%i %s\n", i + 1 + (history_count > HISTORY_LIMIT ? history_count - HISTORY_LIMIT : 0), history[i]);
+            }
+            continue;
+        }
 
-        // Store user input in history, even if its an invalid command.
+        // Handle "!!" input.
+        else if (!strcmp(input, "!!")) {
+            if (history_count == 0) {
+                printf("No commands in history.");
+            }
+            else {
+                strcpy(input, history_count > HISTORY_LIMIT ? history[HISTORY_LIMIT - 1] : history[history_count - 1]);
+                printf("%s\n", input);
+            }
+        }
+
+        // Handle "!n" input.
+        else if (input[0] == '!' && isdigit(input[1])) {
+            int n = atoi(&input[1]); // Parse number from input.
+            if (n == 0 || n <= history_count - HISTORY_LIMIT || n > history_count) {
+                printf("No such command in history.\n");
+                continue;
+            }
+            else {
+                strcpy(input, history[n - 1 - (history_count > HISTORY_LIMIT ? history_count - HISTORY_LIMIT : 0)]);
+                printf("%s\n", input);
+            }
+        }
+
+        // Store user input in history, even if its an invalid command. The "history" command is not stored.
         add_history(history, input, &history_count);
-        printf("Count After: %i\n", history_count);
         
         // Fork a process.
         pid_t pid = fork();
@@ -124,7 +144,6 @@ int main(void) {
 
             char *path;
             char *argv[MAX_LINE / 2];
-            //printf("%s", input);
 
             // Create a new string and copy the input to the new string.
             char input_copy[strlen(input) - 1];
@@ -150,7 +169,6 @@ int main(void) {
                     argv[count] = NULL;
                     break;
                 }
-                // printf("\t%s\n", arg);
                 argv[count++] = arg;
             }
 
