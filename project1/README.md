@@ -1,3 +1,4 @@
+```
 Project 1 - Designing a C program to serve as a Linux shell interface
 
 This project consists of designing a C program to serve as a shell interface that accepts user commands and then executes each command in a separate process. This project can be completed on any Linux, UNIX, or Mac OS X system. A shell interface gives the user a prompt, after which the next command is entered. The example below illustrates the prompt osh> and the user’s next command: cat prog.c. (This command displays the file prog.c on the terminal using the Linux cat command.)
@@ -107,3 +108,4 @@ When the user enters !!, the most recent command in the history is executed.
 Continuing our example from above, if the user enters !!, the ps command will be performed; if the user enters !3, the command cal will be executed. Any command executed in this fashion should be echoed on the user’s screen. The command should also be placed in the history buffer as the next command.
 
 The program should also manage basic error handling. If there are no commands in the history, entering !! should result in a message “No commands in history.” If there is no command corresponding to the number entered with the single !, the program should output "No such command in history."
+```
