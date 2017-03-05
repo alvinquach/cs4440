@@ -9,7 +9,7 @@
 #include <sys/types.h>
 
 #define MAX_LINE 255
-#define HISTORY_LIMIT 3
+#define HISTORY_LIMIT 10
 
 
 void add_history(char* history[], char* input, int* count) {
@@ -39,12 +39,8 @@ void add_history(char* history[], char* input, int* count) {
             strcpy(history[i], input);
             break;
         }
-
     }
-
-    // Increment the history count.
-    *count += 1;
-
+    *count += 1; // Increment the history count.
 }
 
 
@@ -178,11 +174,7 @@ int main(void) {
             // If the execvp failed, then manually exit the fork.
             printf("Failed to execute command '%s'.\n", path);
             return 1;
-
         }
-
     }
-
     return 0;
-
 }
