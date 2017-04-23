@@ -1,10 +1,10 @@
 package pagereplacement;
 
-import pagereplacement.algorithm.FirstInFirstOutReplacement;
-import pagereplacement.algorithm.LeastRecentlyUsedReplacement;
-import pagereplacement.algorithm.OptimalReplacement;
+import pagereplacement.algorithms.FirstInFirstOutReplacement;
+import pagereplacement.algorithms.LeastRecentlyUsedReplacement;
+import pagereplacement.algorithms.OptimalReplacement;
 
-public class Application {
+public class PageReplacement {
 	
 	public static void main(String[] args) {
 		

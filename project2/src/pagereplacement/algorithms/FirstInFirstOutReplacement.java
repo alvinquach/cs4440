@@ -1,4 +1,4 @@
-package pagereplacement.algorithm;
+package pagereplacement.algorithms;
 
 import java.util.LinkedList;
 import java.util.Queue;

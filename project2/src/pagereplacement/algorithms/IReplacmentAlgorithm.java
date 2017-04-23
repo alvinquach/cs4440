@@ -1,4 +1,4 @@
-package pagereplacement.algorithm;
+package pagereplacement.algorithms;
 
 public interface IReplacmentAlgorithm {
 	
