@@ -1,4 +1,4 @@
-###Project 1 - Designing a C program to serve as a Linux shell interface###
+### Project 1 - Designing a C program to serve as a Linux shell interface###
 
 This project consists of designing a C program to serve as a shell interface that accepts user commands and then executes each command in a separate process. This project can be completed on any Linux, UNIX, or Mac OS X system. A shell interface gives the user a prompt, after which the next command is entered. The example below illustrates the prompt osh> and the user’s next command: cat prog.c. (This command displays the file prog.c on the terminal using the Linux cat command.)
 
